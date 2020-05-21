@@ -1,4 +1,4 @@
-{ stdenv, requireFile, zlib, libpng, libSM, libICE, fontconfig, xorg, libGLU, libGL, alsaLib, dbus, xkeyboardconfig, bc, addOpenGLRunpath }:
+{ stdenv, requireFile, zlib, libpng, libSM, libICE, fontconfig, xorg, libGLU, libGL, libXScrnSaver, alsaLib, nss, nspr, pciutils, expat, dbus, xkeyboardconfig, bc, addOpenGLRunpath, WrapQtAppsHook }:
 
 let
   ld_library_path = builtins.concatStringsSep ":" [
@@ -17,12 +17,19 @@ let
       xorg.libXcomposite
       xorg.libXdamage
       xorg.libXtst
+      xorg.libxcb
+      xorg.xcbutil
+      libXScrnSaver
       alsaLib
       fontconfig
       libSM
       libICE
       zlib
       libpng
+      nss
+      nspr
+      pciutils
+      expat
       dbus
       addOpenGLRunpath.driverLink
     ])
@@ -30,11 +37,11 @@ let
   license_dir = "~/.config/houdini";
 in
 stdenv.mkDerivation rec {
-  version = "17.5.327";
+  version = "18.0.460";
   pname = "houdini-runtime";
   src = requireFile rec {
     name = "houdini-${version}-linux_x86_64_gcc6.3.tar.gz";
-    sha256 = "1byigmhmby8lgi2vmgxy9jlrrqk7jyr507zqkihq5bv8kfsanv1x";
+    sha256 = "4dcbd11a96388d76e5082b0d38584d1f145c7b16a6abf593755fe8c9bee62ba3";
     message = ''
       This nix expression requires that ${name} is already part of the store.
       Download it from https://www.sidefx.com and add it to the nix store with:
@@ -47,7 +54,8 @@ stdenv.mkDerivation rec {
     '';
   };
 
-  buildInputs = [ bc ];
+  buildInputs = [ bc qtbase];
+  nativeBuildInputs = [ wrapQtAppsHook ];
   installPhase = ''
     patchShebangs houdini.install
     mkdir -p $out

@@ -1,9 +1,9 @@
-{ callPackage, buildFHSUserEnv, undaemonize }:
+{ callPackage, buildFHSUserEnv, undaemonize, libsForQt5 }:
 
 let
-  houdini-runtime = callPackage ./runtime.nix { };
+  houdini-runtime = libsForQt5.callPackage ./runtime.nix { };
 in buildFHSUserEnv {
-  name = "houdini-${houdini-runtime.version}";
+  name = "houdini";
 
   extraBuildCommands = ''
     mkdir -p $out/usr/lib/sesi
